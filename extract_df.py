@@ -1,9 +1,10 @@
 import pandas as pd
 import os
 
-#restrictions: 1. first 6 digits of the filename should be the contract number
+#restrictions: 1. First 6 digits of the filename should be the contract number
 #              2. Must put all files in a designated folder
 #              3. Sizes must be in [XS,S,M,L,XL] or starts with a number
+#              4. In the Input.xlsx file, please make sure each contract numbers and other data only has one row, and not seperated by blanks
 #              3. Changing Excel layouts may cause errors. Some caveat:
 #                   a. Must have '合同号' and '款号' on the top left
 #                   b. Must have destination port number on the second row
@@ -80,24 +81,3 @@ def find_all_contracts(dir_path,contract_list):
                 all_sheets.update(sheets)
         print(f)
     return all_sheets
-
-
-
-
-#Variables needed from user input
-dir_path = input('Input the directory path of the folder containing all contracts: ')
-
-input_df = pd.DataFrame(None,columns=['Contract_id','Port_num','Desc'])
-
-input_df.to_excel(os.path.join(dir_path,'Input.xlsx'),index=False)
-
-input('Please enter the required information into Input.xlsx located at {}.\nMake sure to close the xlsx file after completed.\nPress Enter to continue...'.format(dir_path))
-
-input_contract = pd.read_excel(os.path.join(dir_path,'Input.xlsx'))
-
-
-#Use function find_all_contracts() with user input
-all_contracts = find_all_contracts(dir_path,input_contract.iloc[:,0])
-
-
-

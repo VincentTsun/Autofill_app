@@ -1,6 +1,5 @@
-from extract_df import all_contracts, find_word_bool, find_first_num, first_char_is_num, dir_path, port
+from extract_df import find_word_bool, find_first_num, first_char_is_num
 import pandas as pd
-import os
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -183,15 +182,28 @@ def main_data(df,colours_dict,sizes):
         data.update(temp_data)
     return data
 
-def get_all_data(contracts):
+def get_all_data(contracts,input_df):
     '''Using main_data(), compile all dictionary data and store in a new dictionary with contract number as key and the old dictionary as values. Returns a dictionary.'''
     all_data = {}
     for i in contracts:
         print(i,'has began processing')
-        data = main_data(all_contracts[i],colour_size(all_contracts[i])[0],colour_size(all_contracts[i])[1])
-        style = style_code(all_contracts[i])
+        
+        #extract data
+        data = main_data(contracts[i],colour_size(contracts[i])[0],colour_size(contracts[i])[1])
+        
+        #extract description from input dataframe
+        
+        desc = input_df.loc[i,'Desc']
+        for v in data:
+            data[v].append(desc)
+        
+        style = style_code(contracts[i])
         data = {style+f"-{key}": val for key, val in data.items()}
+        
+        #insert port number into the keys
+        port = input_df.loc[i,'Port_num']
         all_data[i[:-2]+'_'+port] = (data)
+        
         print(i,'has finished processing')
     return all_data
 
