@@ -11,7 +11,7 @@ input_df = pd.DataFrame(None,columns=['Contract_id','Port_num','Desc'])
 
 input_df.to_excel(os.path.join(dir_path,'Input.xlsx'),index=False)
 
-#input('\n\nPlease enter the required information into Input.xlsx located at {}.\nMake sure to close the xlsx file after completed.\nPress Enter to continue...'.format(dir_path))
+input('\n\nPlease enter the required information into Input.xlsx located at {}.\nMake sure to close the xlsx file after completed.\nPress Enter to continue...'.format(dir_path))
 
 input_contract = pd.read_excel(os.path.join(dir_path,'Input - Copy.xlsx'),index_col=0,dtype='str')
 
