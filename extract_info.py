@@ -45,6 +45,7 @@ def colour_size(df):
     col = df[col_bool.index[col_bool]]
     #append colour codes to the list 
     for i in cropped_df.iloc[:,col.columns[0]]:
+        int(i)
         codes.append(i)
 
     #pair the colour and colour code together
@@ -174,12 +175,22 @@ def main_data(df,colours_dict,sizes):
         #append remark texts to the dictionary
         for key, val in temp_data.items():
             remark_desc = ''
+            carts_quant_dict = {}
             if val[5] == True:
                 small_df = temp_df1[temp_df1[key[3:]]!=0]
                 for i in small_df.index.values:
                     carts_text = small_df.loc[i,'总箱数']
                     quant_text = small_df.loc[i,'每箱数量']
-                    if i != small_df.index.values[-1]:
+                    if (carts_text,quant_text) in carts_quant_dict:
+                        carts_quant_dict[(carts_text,quant_text)] += 1
+                    else:
+                        carts_quant_dict[(carts_text,quant_text)] = 1
+                counter = 0
+                for k, v in carts_quant_dict.items():
+                    counter+=1
+                    carts_text = k[0]*v
+                    quant_text = k[1]
+                    if counter != len(carts_quant_dict):
                         text = '{} carton x {} pcs, \n'.format(carts_text,quant_text)
                     else:
                         text = '{} carton x {} pcs.'.format(carts_text,quant_text)

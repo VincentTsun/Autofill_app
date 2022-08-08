@@ -33,8 +33,6 @@ def part1(dir_path):
         try:
             #write data into excel file
             data_df.to_excel(os.path.join(dir_path,'Preview.xlsx'))
-            
-
             #To stop console from closing from the .exe file
             input('\nExtraction has completed\n\nPlease check the Preview.xlsx file before proceeding.\n\nPress enter to continue...')
         except Exception as e:
