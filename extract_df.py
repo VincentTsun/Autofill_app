@@ -18,6 +18,7 @@ import os
 
 
 #Reuseable functions to simplify the cleaning process
+
 def first_char_is_num(string):
     '''Find if the first character of in the string is a number. Returns True or False.'''
     try:
@@ -32,7 +33,6 @@ def find_word_bool(df,word):
     return (df.apply(lambda row: row.astype(str).str.replace(' ','').str.contains(word).any(), axis=0) ,df.apply(lambda row: row.astype(str).str.replace(' ','').str.contains(word).any(), axis=1))
 
 
-
 def find_first_num(row):
     '''Find the first string that starts with a number, then returns the string.'''
     for i in range(1,len(row)):
@@ -41,13 +41,11 @@ def find_first_num(row):
             return num
     
 
-
-
 def first_six(lst):
     '''return the first 6 characters of every item in the list.'''
     lst2 = []
     for item in lst:
-        lst2.append(item[:6])
+        lst2.append(str(item)[:6])
     return lst2
     
 
@@ -62,8 +60,8 @@ def find_contracts(xls,contract_list):
         df = pd.read_excel(xls,i,header=None)
         contract_row = df[find_word_bool(df,'合同号')[1]].iloc[0]
         contract_num = find_first_num(contract_row)
-        if contract_num in contract_list:
-            sheets[contract_num] = pd.read_excel(xls,i,header=None)
+        if contract_num.strip() in contract_list:
+            sheets[contract_num.strip()] = pd.read_excel(xls,i,header=None)
     return sheets
 
 def find_all_contracts(dir_path,contract_list):
@@ -79,5 +77,5 @@ def find_all_contracts(dir_path,contract_list):
                 xls = pd.ExcelFile(f)
                 sheets = find_contracts(xls,contract_list)
                 all_sheets.update(sheets)
-        print(f)
+        print('Checking',f)
     return all_sheets

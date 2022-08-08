@@ -109,15 +109,21 @@ def main_data(df,colours_dict,sizes):
         temp_df1 = temp_df[:]
         
         #extract quantity first
-        for i in sizes:
+        temp_sizes = sizes[:]
+        for i in temp_sizes:
             name = colours_dict[colour]+'-'+i
             quant = temp_df['总箱数'].dot(temp_df[i]).sum()
-            temp_data[name] = [quant]
+            if quant > 0:
+                temp_data[name] = [quant]
+            else:
+                sizes.remove(i)
+            
 
         #extract number of carts, cbm, weight, need for remark (True or False), and if it is mixed (True or False)
         for i in sizes:
             name = colours_dict[colour]+'-'+i
             if temp_df.empty == False:
+                
                 #filter for only rows that matter to each size
                 size_df = temp_df[temp_df[i]!=0]
                 #drop the used rows so it is easier to calculate carts, cbm, weight
@@ -126,10 +132,10 @@ def main_data(df,colours_dict,sizes):
                 carts = size_df['总箱数'].sum()
                 temp_data[name].append(carts)
 
-                weight = size_df['总毛重'].sum()
+                weight = size_df['总毛重'].round(2).sum()
                 temp_data[name].append(weight)
 
-                cbm = size_df['CBM'].sum()
+                cbm = size_df['CBM'].round(3).sum()
                 temp_data[name].append(cbm)
 
                 #check if the size only has one column, and assign remark and mixed accordingly
@@ -186,24 +192,24 @@ def get_all_data(contracts,input_df):
     '''Using main_data(), compile all dictionary data and store in a new dictionary with contract number as key and the old dictionary as values. Returns a dictionary.'''
     all_data = {}
     for i in contracts:
-        print(i,'has began processing')
+        print(i,'has begun processing')
         
         #extract data
         data = main_data(contracts[i],colour_size(contracts[i])[0],colour_size(contracts[i])[1])
-        
         #extract description from input dataframe
         
-        desc = input_df.loc[i,'Desc']
+        marks = input_df.loc[i,'Marks']
         for v in data:
-            data[v].append(desc)
+            data[v].append(marks)
         
         style = style_code(contracts[i])
         data = {style+f"-{key}": val for key, val in data.items()}
-        
         #insert port number into the keys
         port = input_df.loc[i,'Port_num']
-        all_data[i[:-2]+'_'+port] = (data)
-        
+        if '-' in i:
+            all_data[i[:-2]+'_'+port] = (data)
+        else:
+            all_data[i+'_'+port] = (data)
         print(i,'has finished processing')
     return all_data
 
