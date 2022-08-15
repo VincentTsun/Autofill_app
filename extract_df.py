@@ -5,13 +5,14 @@ import os
 #              2. Must put all files in a designated folder
 #              3. Sizes must be in [XS,S,M,L,XL] or starts with a number
 #              4. In the Input.xlsx file, please make sure each contract numbers and other data only has one row, and not seperated by blanks
-#              3. Changing Excel layouts may cause errors. Some caveat:
+#              5. Changing Excel layouts may cause errors. Some caveat:
 #                   a. Must have '合同号' and '款号' on the top left
 #                   b. Must have destination port number on the second row
 #                   c. Must have '颜色' on the top left of the main table, '每箱数量' on the top middle of the main table, and '总毛重' on the top right of the main table
 #                   d. '色号' must be located to the left of the first size at the bottom chart
 #                   e. Each colour must be seperated by one or more empty lines in the main table
 #                   f. Colour labels must be correct!
+#                   g. Sizes must be located at the bottom chart, and the number of sizes must be the same as the sizes at the upper chart
 
 
 
@@ -53,7 +54,7 @@ def first_six(lst):
 #find the contracts that is in the list of contract numbers and output a dictionary with the contract numbers as keys  
 #and the dataframe of the entire excel sheets as values.
 def find_contracts(xls,contract_list):
-    '''Locate the sheets with contract number that matches the contract_list, then adding to a dictionary. 
+    '''Locate the Excel sheets with contract number that matches the contract_list, then adding to a dictionary. 
     Returns the dictionary, with contract number for keys and the sheet's dataframe for values.'''
     sheets = {}
     for i in range(len(xls.sheet_names)):

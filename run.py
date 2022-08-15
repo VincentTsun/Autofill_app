@@ -8,7 +8,7 @@ import pandas as pd
 def part1(dir_path):
 
     #create an empty excel sheet with columns for user input
-    input_df = pd.DataFrame(None,columns=['Contract_id','Port_num','Marks'])
+    input_df = pd.DataFrame(None,columns=['Contract_id','Port_num','Marks','Unit'])
     input_df.to_excel(os.path.join(dir_path,'Input.xlsx'),index=False)
 
     #stop the program for user input
@@ -16,16 +16,19 @@ def part1(dir_path):
 
     #extract user input
     input_contract = pd.read_excel(os.path.join(dir_path,'Input.xlsx'),index_col=0,dtype='str')
+    #transform all contract id into string type for comparison
     input_contract.index = input_contract.index.astype('str')
 
-    #Use function find_all_contracts() with user input
+    #Use function find_all_contracts() with user input and returns the dictionary, with contract number for keys and the Excel sheet's dataframe for values
     all_contracts = find_all_contracts(dir_path,list(input_contract.index.astype('str')))
 
     #try and except to stop program from closing when error occurs
     try:
-        #extract data from dataframe
+        #extract data from dataframe with get_all_data() 
         info_dict = get_all_data(all_contracts,input_contract)
-        columns= ['Quantity','Carts','Weight','CBM','Mixed?','Remark?','Remark text','Marks']
+        
+        #Combine contract id and style id, serve as unique keys
+        columns= ['Quantity','Carts','Weight','CBM','Mixed?','Remark?','Remark text','Marks','Unit']
         data_df = pd.DataFrame.from_dict({(i,j): info_dict[i][j] 
                                 for i in info_dict.keys() 
                                 for j in info_dict[i].keys()},

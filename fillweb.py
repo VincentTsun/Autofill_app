@@ -133,7 +133,7 @@ def fill_in(data_df,driver,startline='',endline=''):
     if startline == '':
         startline = 1
     if endline == '':
-        endline = len(data_df)+1
+        endline = len(data_df)
     data_df_reset = data_df.reset_index()
     for i in range(int(startline)-1,int(endline)):
         num = i+1
@@ -173,9 +173,35 @@ def fill_in(data_df,driver,startline='',endline=''):
             wrongquant.append('Line No. {}'.format(num))
             print('Found unmatched quantity: Line No. {}'.format(num))
 
+        if data_row['Unit'].values == 'PCS':
+            quantity_dropdown = driver.find_element(By.XPATH,'//*[@id="qtyUnitId{}"]/option[2]'.format(i))
+            quantity_dropdown.click()
+        elif data_row['Unit'].values == 'BOX':
+            quantity_dropdown = driver.find_element(By.XPATH,'//*[@id="qtyUnitId{}"]/option[3]'.format(i))
+            quantity_dropdown.click()
+        elif data_row['Unit'].values == 'CAS':
+            quantity_dropdown = driver.find_element(By.XPATH,'//*[@id="qtyUnitId{}"]/option[4]'.format(i))
+            quantity_dropdown.click()
+        elif data_row['Unit'].values == 'CTN':
+            quantity_dropdown = driver.find_element(By.XPATH,'//*[@id="qtyUnitId{}"]/option[5]'.format(i))
+            quantity_dropdown.click() 
+        elif data_row['Unit'].values == 'DOZ':
+            quantity_dropdown = driver.find_element(By.XPATH,'//*[@id="qtyUnitId{}"]/option[6]'.format(i))
+            quantity_dropdown.click()
+        elif data_row['Unit'].values == 'EA':
+            quantity_dropdown = driver.find_element(By.XPATH,'//*[@id="qtyUnitId{}"]/option[7]'.format(i))
+            quantity_dropdown.click()
+        elif data_row['Unit'].values == 'PLT':
+            quantity_dropdown = driver.find_element(By.XPATH,'//*[@id="qtyUnitId{}"]/option[8]'.format(i))
+            quantity_dropdown.click()
+        elif data_row['Unit'].values == 'UNI':
+            quantity_dropdown = driver.find_element(By.XPATH,'//*[@id="qtyUnitId{}"]/option[9]'.format(i))
+            quantity_dropdown.click()
+        else:
+            quantity_dropdown = driver.find_element(By.XPATH,'//*[@id="qtyUnitId{}"]/option[1]'.format(i))
+            quantity_dropdown.click()
 
-        quantity_dropdown = driver.find_element(By.XPATH,'//*[@id="qtyUnitId{}"]/option[2]'.format(i))
-        quantity_dropdown.click()
+       
 
         marks_field = driver.find_element(By.XPATH,'//*[@id="lnMkNum{}"]'.format(i))
         marks_field.click()
