@@ -135,7 +135,7 @@ def fill_in(data_df,driver,startline='',endline=''):
     if endline == '':
         endline = len(data_df)+1
     data_df_reset = data_df.reset_index()
-    for i in range(int(startline)-1,int(endline)-1):
+    for i in range(int(startline)-1,int(endline)):
         num = i+1
         
         

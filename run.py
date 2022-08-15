@@ -101,10 +101,10 @@ elif mode == 3:
     username = input('Username: ')
     password = input('Password: ')
     booking_num = input('Booking number: ')
-    #try:
-    part3(dir_path,username,password,booking_num)
-    #except:
-        #input('Error occured when trying to fill data onto the system.\nPress Enter to close the program...')
+    try:
+        part3(dir_path,username,password,booking_num)
+    except:
+        input('Error occured when trying to fill data onto the system.\nPress Enter to close the program...')
 elif mode ==4:
     dir_path = input('Input the directory path of the folder containing all contracts: ')
     part1(dir_path)
