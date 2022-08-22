@@ -1,5 +1,6 @@
 from extract_df import find_word_bool, find_first_num, first_char_is_num
 import pandas as pd
+from decimal import Decimal, ROUND_HALF_UP
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -111,17 +112,18 @@ def main_data(df,colours_dict,sizes):
         
         #extract quantity first
         temp_sizes = sizes[:]
-        for i in temp_sizes:
+        size_iter = sizes[:]
+        for i in size_iter:
             name = colours_dict[colour]+'-'+i
             quant = temp_df['总箱数'].dot(temp_df[i]).sum()
             if quant > 0:
                 temp_data[name] = [quant]
             else:
-                sizes.remove(i)
+                temp_sizes.remove(i)
             
 
         #extract number of carts, cbm, weight, need for remark (True or False), and if it is mixed (True or False)
-        for i in sizes:
+        for i in temp_sizes:
             name = colours_dict[colour]+'-'+i
             if temp_df.empty == False:
                 
@@ -133,14 +135,18 @@ def main_data(df,colours_dict,sizes):
                 carts = size_df['总箱数'].sum()
                 temp_data[name].append(carts)
 
-                weight = size_df['总毛重'].round(2).sum()
-                temp_data[name].append(weight)
-
-                cbm = size_df['CBM'].round(3).sum()
-                temp_data[name].append(cbm)
+                weight = 0
+                for y in range(len(size_df['总毛重'])):
+                    weight += Decimal(str(size_df['总毛重'].iloc[y])).quantize(Decimal('0.00'),rounding=ROUND_HALF_UP)
+                temp_data[name].append(float(weight))
+                
+                cbm = 0
+                for y in range(len(size_df['总毛重'])):
+                    cbm += Decimal(str(size_df['CBM'].iloc[y])).quantize(Decimal('0.000'),rounding=ROUND_HALF_UP)
+                temp_data[name].append(float(cbm))
 
                 #check if the size only has one column, and assign remark and mixed accordingly
-                small_df = temp_df1.loc[:,sizes[0]:sizes[-1]][temp_df1[i]!=0]
+                small_df = temp_df1.loc[:,temp_sizes[0]:temp_sizes[-1]][temp_df1[i]!=0]
                 if len(small_df.loc[:,(small_df != 0).any(axis=0)].columns)>1:
                     mixed = True
                     remark = False
