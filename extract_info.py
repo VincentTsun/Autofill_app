@@ -28,15 +28,15 @@ def colour_size(df):
     #crop the top of the dataframe along with header row
     cropped_df = df.iloc[row_start+1:]
     
-    #find first null value and set as end point
-    row_end = cropped_df[pd.isnull(cropped_df[first_col.columns[0]])==True].index[0]
+    #find first null value and set as end point, if there is a empty space at the end
+    if cropped_df.iloc[:,first_col.columns[0]].isna().any()==True:
+        row_end = cropped_df[pd.isnull(cropped_df.iloc[:,first_col.columns[0]])==True].index[0]
+        #crop the bottom of the dataframe
+        cropped_df = cropped_df.loc[:row_end-1]
     
     #rename the headers
     cropped_df = cropped_df.rename(columns = df.iloc[row_start])
-    
-    #crop the bottom of the dataframe
-    cropped_df = cropped_df.loc[:row_end-1]
-    
+
     #append colours to the list
     for i in cropped_df.iloc[:,first_col.columns[0]]:
         colours.append(i)
