@@ -130,6 +130,7 @@ def add_po(input_contract,driver):
 def fill_in(data_df,driver,startline='',endline=''):
     '''function to fill in data into the web form'''
     wrongquant = []
+    wrongquantnum = []
     if startline == '':
         startline = 1
     if endline == '':
@@ -171,6 +172,7 @@ def fill_in(data_df,driver,startline='',endline=''):
         quantity_field = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bookedQtyId{}"]'.format(i))))
         if quantity_field.get_attribute('value') != str(data_row['Quantity'].item()):
             wrongquant.append('Line No. {}'.format(num))
+            wrongquantnum.append(num)
             print('Found unmatched quantity: Line No. {}'.format(num))
 
         if data_row['Unit'].values == 'PCS':
@@ -229,9 +231,46 @@ def fill_in(data_df,driver,startline='',endline=''):
             next_page_click.click()
     print('PO with mismatched quantities:',wrongquant)
     save_draft(driver)
+    print('\nWaiting for file to be saved...')
+    while True:
+        try:
+            first_page_click = driver.find_element(By.XPATH,'//*[@id="mFirst"]/i')
+            first_page_click.click()
+            break
+        except:
+            time.sleep(1)
+    input('\nSaving complete! \nPress Enter to proceeed...')
+    
+    #filling mismatched quantity on the system after the user checked for errors
+    if len(wrongquantnum) != 0:
+        fill_mismatch = ''
+        while fill_mismatch.lower().strip() != 'y' and fill_mismatch.lower().strip() != 'n':
+            fill_mismatch = input('Do you wish to replace mismatched quantities on the system(y/n)? ')
+        fill_mismatch = fill_mismatch.lower().strip()
+        if fill_mismatch == 'y':
+            for num in wrongquantnum:
+                while True:
+                    try:
+                        po_id_web = driver.find_element(By.ID,'POID_{}'.format(num))
+                        sku_id_web = driver.find_element(By.ID,'SKUID_{}'.format(num))
+                        web_key = (po_id_web.text,sku_id_web.text)
+                        data_row = data_df_reset[data_df_reset['index'] == str(web_key)]
+
+                        quantity_field = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bookedQtyId{}"]'.format(i))))
+                        quantity_field.click()
+                        break
+                    except:
+                        next_page_click = driver.find_element(By.XPATH,'//*[@id="mNext"]/i')
+                        next_page_click.click()
+            
+                print(web_key,'verified. Begin filling...')
+                quantity_field.send_keys(Keys.CONTROL + "a")
+                quantity_field.send_keys(int(data_row['Quantity'].item()))
+    
+    print('\nData filling process complete!\nPress Enter to close the program...')
 
 
-              
+            
         
 
 

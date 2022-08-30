@@ -82,7 +82,7 @@ def part3(dir_path,username,password,booking_num):
     web_login(username,password,driver)
     to_booking_page(booking_num,driver)
     fill_in(data_df,driver,startline,endline)
-    input('Please Wait for file to be saved...\nPress Enter when saving is completed...')
+
 
 mode = int(input('Functions:\n1. Extract data from Excel\n2. Add PO to booking\n3. Fill system with data\n4. All of the above\n'))
 if mode == 1:
