@@ -210,10 +210,10 @@ def fill_in(data_df,driver,startline='',endline=''):
         marks_field.send_keys(Keys.CONTROL + "a")
         marks_field.send_keys(Keys.BACKSPACE)
         marks_field.send_keys(data_row['Marks'].values)
-        if data_row['Remark?'].values == True:
-            marks_field.send_keys(Keys.RETURN)
-            marks_field.send_keys(Keys.RETURN)
-            marks_field.send_keys(data_row['Remark text'].values)
+        #if data_row['Remark?'].values == True:
+        #    marks_field.send_keys(Keys.RETURN)
+        #    marks_field.send_keys(Keys.RETURN)
+        #    marks_field.send_keys(data_row['Remark text'].values)
 
         country_code_field = driver.find_element(By.XPATH,'//*[@id="EditSOForm_soDto_soLineDtoList_{}__soLineHtsDtoList_0__country_countryCode"]'.format(i))
         country_code_field.clear()

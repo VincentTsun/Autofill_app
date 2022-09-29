@@ -149,17 +149,17 @@ def main_data(df,colours_dict,sizes):
                 small_df = temp_df1.loc[:,temp_sizes[0]:temp_sizes[-1]][temp_df1[i]!=0]
                 if len(small_df.loc[:,(small_df != 0).any(axis=0)].columns)>1:
                     mixed = True
-                    remark = False
+                    #remark = False
                 else:
                     mixed = False
-                    if len(small_df.loc[:,(small_df != 0).any(axis=0)].index)>1:
-                        remark = True
-                    else:
-                        remark = False
+                    #if len(small_df.loc[:,(small_df != 0).any(axis=0)].index)>1:
+                        #remark = True
+                    #else:
+                        #remark = False
                 
                 temp_data[name].append(mixed)
                 
-                temp_data[name].append(remark)
+                #temp_data[name].append(remark)
 
                 
             else:
@@ -176,32 +176,32 @@ def main_data(df,colours_dict,sizes):
                 mixed = True
                 temp_data[name].append(mixed)
                 
-                remark = False
-                temp_data[name].append(remark)
+                #remark = False
+                #temp_data[name].append(remark)
         #append remark texts to the dictionary
-        for key, val in temp_data.items():
-            remark_desc = ''
-            carts_quant_dict = {}
-            if val[5] == True:
-                small_df = temp_df1[temp_df1[key[3:]]!=0]
-                for i in small_df.index.values:
-                    carts_text = small_df.loc[i,'总箱数']
-                    quant_text = small_df.loc[i,'每箱数量']
-                    if (carts_text,quant_text) in carts_quant_dict:
-                        carts_quant_dict[(carts_text,quant_text)] += 1
-                    else:
-                        carts_quant_dict[(carts_text,quant_text)] = 1
-                counter = 0
-                for k, v in carts_quant_dict.items():
-                    counter+=1
-                    carts_text = k[0]*v
-                    quant_text = k[1]
-                    if counter != len(carts_quant_dict):
-                        text = '{} carton x {} pcs, \n'.format(carts_text,quant_text)
-                    else:
-                        text = '{} carton x {} pcs.'.format(carts_text,quant_text)
-                    remark_desc += text
-            temp_data[key].append(remark_desc)
+        #for key, val in temp_data.items():
+        #    remark_desc = ''
+        #    carts_quant_dict = {}
+        #    if val[5] == True:
+        #        small_df = temp_df1[temp_df1[key[3:]]!=0]
+        #        for i in small_df.index.values:
+        #            carts_text = small_df.loc[i,'总箱数']
+        #            quant_text = small_df.loc[i,'每箱数量']
+        #            if (carts_text,quant_text) in carts_quant_dict:
+        #                carts_quant_dict[(carts_text,quant_text)] += 1
+        #            else:
+        #                carts_quant_dict[(carts_text,quant_text)] = 1
+        #        counter = 0
+        #        for k, v in carts_quant_dict.items():
+        #            counter+=1
+        #            carts_text = k[0]*v
+        #            quant_text = k[1]
+        #            if counter != len(carts_quant_dict):
+        #                text = '{} carton x {} pcs, \n'.format(carts_text,quant_text)
+        #            else:
+        #                text = '{} carton x {} pcs.'.format(carts_text,quant_text)
+        #            remark_desc += text
+        #    temp_data[key].append(remark_desc)
         data.update(temp_data)
     return data
 
