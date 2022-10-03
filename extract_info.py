@@ -11,13 +11,13 @@ def style_code(df):
 
 def colour_size(df):
     '''Extract the data for the colour and size table. Returns {colours: codes}, sizes.'''
-    #empty list
+    #empty lists
     colours = []
     codes = []
     sizes = []
     
 
-    #find first column
+    #find the first column
     col_bool = find_word_bool(df,'颜色')[0]
     first_col = df[col_bool.index[col_bool]]
 
@@ -28,7 +28,7 @@ def colour_size(df):
     #crop the top of the dataframe along with header row
     cropped_df = df.iloc[row_start+1:]
     
-    #find first null value and set as end point, if there is a empty space at the end
+    #find first null value and set as end point, if there is an empty space at the end
     if cropped_df.iloc[:,first_col.columns[0]].isna().any()==True:
         row_end = cropped_df[pd.isnull(cropped_df.iloc[:,first_col.columns[0]])==True].index[0]
         #crop the bottom of the dataframe
@@ -55,12 +55,12 @@ def colour_size(df):
     #find all the possible sizes and append to the list
     for i in range(len(cropped_df.columns)):
         if pd.notnull(cropped_df.columns[i]):
-            if cropped_df.columns[i].upper() in ['XS','S','M','L','XL']:
+            if cropped_df.columns[i].upper() in ['2XS','XS','S','M','L','XL']:
                 sizes.append(cropped_df.columns[i])
             elif first_char_is_num(cropped_df.columns[i]) == True:
                 sizes.append(cropped_df.columns[i])
-
-    return  colours_dict, sizes
+    cropped_df = cropped_df.iloc[:,:len(sizes)+5]
+    return  colours_dict, sizes, cropped_df
 
 def main_data(df,colours_dict,sizes):
     '''Clean up the dataframe for extracting number of cartons, cbm, weight, need for remark (True or False), and if it is mixed (True or False). Returns a dictionary.'''
@@ -87,6 +87,10 @@ def main_data(df,colours_dict,sizes):
     
     #create a dictionary to store data
     data = {}
+
+    #create a dictionary to store dataframe for each colour
+    data_dfs = {}
+
     #split the excel sheet into sections separated by colours from the colours dictionary.
     for colour in colours_dict:
         #temporary dictionary for each colour 
@@ -203,7 +207,8 @@ def main_data(df,colours_dict,sizes):
         #            remark_desc += text
         #    temp_data[key].append(remark_desc)
         data.update(temp_data)
-    return data
+        data_dfs[colour] = temp_df1
+    return data, data_dfs
 
 def get_all_data(contracts,input_df):
     '''Using main_data(), compile all dictionary data and store in a new dictionary with contract number as key and the old dictionary as values. Returns a dictionary.'''
@@ -212,7 +217,7 @@ def get_all_data(contracts,input_df):
         print(i,'has begun processing')
         
         #extract data
-        data = main_data(contracts[i],colour_size(contracts[i])[0],colour_size(contracts[i])[1])
+        data = main_data(contracts[i],colour_size(contracts[i])[0],colour_size(contracts[i])[1])[0]
 
         #extract marks and unit from input dataframe 
         marks = input_df.loc[i,'Marks']

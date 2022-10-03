@@ -4,6 +4,7 @@ from fillweb import web_login,to_booking_page,fill_in,add_po
 from selenium import webdriver
 import os
 import pandas as pd
+from DPL import dpl_setup
 
 def part1(dir_path):
 
@@ -28,7 +29,7 @@ def part1(dir_path):
         info_dict = get_all_data(all_contracts,input_contract)
         
         #Combine contract id and style id, serve as unique keys
-        columns= ['Quantity','Carts','Weight','CBM','Mixed?','Remark?','Remark text','Marks','Unit']
+        columns= ['Quantity','Carts','Weight','CBM','Mixed?','Marks','Unit']
         data_df = pd.DataFrame.from_dict({(i,j): info_dict[i][j] 
                                 for i in info_dict.keys() 
                                 for j in info_dict[i].keys()},
@@ -84,7 +85,7 @@ def part3(dir_path,username,password,booking_num):
     fill_in(data_df,driver,startline,endline)
 
 
-mode = int(input('Functions:\n1. Extract data from Excel\n2. Add PO to booking\n3. Fill system with data\n4. All of the above\n'))
+mode = int(input('Functions:\n1. Extract data from Excel\n2. Add PO to booking\n3. Fill system with data\n4. All of the above\n5. DPL\n'))
 if mode == 1:
     dir_path = input('Input the directory path of the folder containing all contracts: ')
     part1(dir_path)
@@ -125,6 +126,12 @@ elif mode ==4:
         part3(dir_path,username,password,booking_num)
     except:
         input('Error occured when trying to fill data onto the system.\nPress Enter to close the program...')
+elif mode == 5:
+    dir_path = input('Input the directory path of the folder containing all contracts: ')
+    #try:
+    dpl_setup(dir_path)
+    #except:
+        #input('Error occured when trying to compile the DPL.\nPress Enter to close the program...')
 else:
     input('Value Error. Press Enter to close the program...')
 
