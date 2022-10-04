@@ -128,10 +128,10 @@ elif mode ==4:
         input('Error occured when trying to fill data onto the system.\nPress Enter to close the program...')
 elif mode == 5:
     dir_path = input('Input the directory path of the folder containing all contracts: ')
-    #try:
-    dpl_setup(dir_path)
-    #except:
-        #input('Error occured when trying to compile the DPL.\nPress Enter to close the program...')
+    try:
+        dpl_setup(dir_path)
+    except:
+        input('Error occured when trying to compile the DPL.\nPress Enter to close the program...')
 else:
     input('Value Error. Press Enter to close the program...')
 

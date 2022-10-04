@@ -73,9 +73,12 @@ def fill_dpl(sheet,info_dict,id):
                 if table.iloc[row][size_num+6] != 0:
                     sheet.range((current_row,size_col)).value = table.iloc[row][size_num+6]
             if len(info_dict['sizes'])<=12:
-                current_col += 16
+                current_col += 14
+                sheet.range((current_row,current_col)).value = sheet.range((current_row,current_col)).value = '=V'+str(current_row)+'+'+'D'+str(current_row)+'*'+str(table.iloc[row]['纸箱重量'])
             else:
                 current_col += 20
+                sheet.range((current_row,current_col)).value = sheet.range((current_row,current_col)).value = '=AB'+str(current_row)+'+'+'D'+str(current_row)+'*'+str(table.iloc[row]['纸箱重量'])
+            current_col += 2
             sheet.range((current_row,current_col)).value = info_dict['nw']
             current_col += 1
             sheet.range((current_row,current_col)).value = round(table.iloc[row]['CBM'],3)
@@ -103,13 +106,10 @@ def fill_dpl(sheet,info_dict,id):
     if len(info_dict['sizes'])<=12:
         current_col_2 += 15
     else:
-        current_col_2 += 19
+        current_col_2 += 21
     formula = sheet.range((23,current_col_2)).formula
     sheet.range((row_range_start,current_col_2),(row_range_end,current_col_2)).formula = formula
-    current_col_2 += 1 
-    formula = sheet.range((23,current_col_2)).formula
-    sheet.range((row_range_start,current_col_2),(row_range_end,current_col_2)).formula = formula
-    current_col_2 += 1 
+    current_col_2 += 2
     formula = sheet.range((23,current_col_2)).formula
     sheet.range((row_range_start,current_col_2),(row_range_end,current_col_2)).formula = formula
 
@@ -180,7 +180,7 @@ def dpl_setup(dir_path):
     for i in range(len(input_list)):
         if len(info_dict[input_list[i]]['sizes']) <= 12:
             sheet = wb_template.sheets[0]
-        elif len(info_dict[input_list[i]]['sizes']) <= 16:
+        elif len(info_dict[input_list[i]]['sizes']) <= 18:
             sheet = wb_template.sheets[1]
         else:
             input('Too many sizes for the po. Please contact me.')
