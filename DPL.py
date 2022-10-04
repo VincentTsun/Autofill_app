@@ -4,7 +4,7 @@ import os
 from extract_info import colour_size, main_data
 from extract_df import find_contracts
 
-def find_loc(sheet,label,row_end=100,col_end=40,row_start=1,col_start=1):
+def find_loc(sheet,label,row_end=500,col_end=40,row_start=1,col_start=1):
     '''Find the location of the specified value from the excel sheet. Returns a tuple (row,column).'''
     for row in range(row_start, row_end):
         for col in range(col_start, col_end):
@@ -13,7 +13,7 @@ def find_loc(sheet,label,row_end=100,col_end=40,row_start=1,col_start=1):
                     location = (row,col)
                     return location
 
-def extract_dpl_value(sheet,label,row_end=100,col_end=40,row_start=1,col_start=1,method='same_row'):
+def extract_dpl_value(sheet,label,row_end=500,col_end=40,row_start=1,col_start=1,method='same_row'):
     '''extract the value based on the label from the Excel sheet'''
     location = find_loc(sheet,label,row_end,col_end,row_start,col_start)
     col = location[1]
@@ -50,7 +50,7 @@ def fill_dpl(sheet,info_dict,id):
         current_col+=1
     
     #fill main data
-    data_location = find_loc(sheet,'REPLEN')
+    data_location = find_loc(sheet,'REPLEN',row_end=100)
     current_row = data_location[0]+2
     current_col = data_location[1]
     row_added = 0
@@ -114,7 +114,8 @@ def fill_dpl(sheet,info_dict,id):
     sheet.range((row_range_start,current_col_2),(row_range_end,current_col_2)).formula = formula
 
     #fill summary
-    summary_location = find_loc(sheet,'REPLEN QUANTITY',row_start=38+row_added,col_start=5)
+    row_end = sheet.used_range[-1].row
+    summary_location = find_loc(sheet,'REPLEN QUANTITY',row_start=38+row_added,col_start=5,row_end=row_end)
     current_row = summary_location[0]+2
     current_col = summary_location[1]
     for c in range(len(info_dict['colour_table']['客色號'])):
@@ -154,7 +155,8 @@ def dpl_setup(dir_path):
                         colour_table = cs[2]
                         data_table = main_data(df[id],colours,sizes)[1]
                         for colour in colours:
-                            alt_name = extract_dpl_value(temp_sheet,colour,row_end=50,col_end=2,row_start=10,method='same_col')
+                            row_end = sheet.used_range[-1].row
+                            alt_name = extract_dpl_value(temp_sheet,colour,row_end=row_end,col_end=2,row_start=10,method='same_col')
                             data_table[alt_name] = data_table.pop(colour)
                         info_dict[id] = {'nw':nw,'style':style,'colours':colours,'sizes':sizes,'colour_table':colour_table,'data_table':data_table}
                         break_flag = True
