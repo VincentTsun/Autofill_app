@@ -51,8 +51,13 @@ def part2(dir_path,username,password,booking_num):
     PATH = "C:\Program Files (x86)\chromedriver.exe"
     input_contract = pd.read_excel(os.path.join(dir_path,'Input.xlsx'),index_col=0,dtype='str')
     
-    driver = webdriver.Chrome(PATH)
-    driver.get('https://portal.damco.com/Applications/shipper/')
+    try:
+        driver = webdriver.Chrome(PATH)
+        driver.get('https://portal.damco.com/Applications/shipper/')
+    except:
+        print('\nPlease make sure the chrome web driver matches up with your chrome version, and is located at C:\Program Files (x86).')
+        print('Make sure that in the folder C:\Program Files (x86), there is a file called chromedriver.exe')
+        input('\nPlease close the program...')
 
     web_login(username,password,driver)
     to_booking_page(booking_num,driver)

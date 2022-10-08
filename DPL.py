@@ -147,7 +147,7 @@ def dpl_setup(dir_path):
                     temp_sheet = f.sheets[sheet]
                     if extract_dpl_value(temp_sheet,'合同号:',4) == id:
                         df = find_contracts(pd.ExcelFile(os.path.join(dir_path,filename)),[id])
-                        nw = extract_dpl_value(temp_sheet,'NW:',10)
+                        nw = extract_dpl_value(temp_sheet,'NW:',20)
                         style = extract_dpl_value(temp_sheet,'款  号:',6)
                         cs = colour_size(df[id])
                         colours = cs[0]

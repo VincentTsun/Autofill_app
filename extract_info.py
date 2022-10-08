@@ -68,9 +68,9 @@ def main_data(df,colours_dict,sizes):
     header_rows = df.loc[find_word_bool(df,'颜色')[1]]
     header_index = header_rows.index[0]
     
-    size_rows = df.loc[find_word_bool(df,sizes[0])[1]]
+    size_rows = df.loc[find_word_bool(df,sizes[0],ignore_row=[num for num in range(5)])[1]]
     size_index = size_rows.index[0]
-    size_col_bool = find_word_bool(df,sizes[0])[0]
+    size_col_bool = find_word_bool(df,sizes[0],ignore_row=[num for num in range(5)])[0]
     size_col = df[size_col_bool.index[size_col_bool]]
     size_col_index = size_col.columns[0]
     
@@ -110,6 +110,7 @@ def main_data(df,colours_dict,sizes):
         temp_df = cropped_df.loc[colour_row_start:row_end-1]
         temp_df.iloc[:,0] = colours_dict[colour]
         temp_df.fillna(0,inplace=True)
+        temp_df.columns = temp_df.columns.astype(str).str.replace("\n", "")
         
         #Make a copy of temp_df to preserve all rows for later calculations
         temp_df1 = temp_df[:]

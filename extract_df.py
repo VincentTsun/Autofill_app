@@ -29,9 +29,15 @@ def first_char_is_num(string):
         return False
 
 
-def find_word_bool(df,word):
+def find_word_bool(df,word,ignore_col=[],ignore_row=[]):
     '''Find the first location in the database with the specified keyword, returns a tuple (column,row) of boolean values as dataframe conditions.'''
-    return (df.apply(lambda row: row.astype(str).str.replace(' ','').str.contains(word).any(), axis=0) ,df.apply(lambda row: row.astype(str).str.replace(' ','').str.contains(word).any(), axis=1))
+    col_bool = df.apply(lambda row: row.astype(str).str.replace(' ','').str.contains(word).any(), axis=0) 
+    for i in ignore_col:
+        col_bool[i] = False
+    row_bool = df.apply(lambda row: row.astype(str).str.replace(' ','').str.contains(word).any(), axis=1)
+    for i in ignore_row:
+        row_bool[i] = False
+    return (col_bool,row_bool)
 
 
 def find_first_num(row):

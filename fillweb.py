@@ -220,11 +220,17 @@ def fill_in(data_df,driver,startline='',endline=''):
         country_code_field.send_keys('CN')
 
         if data_row['Mixed?'].bool() == True:
-            mix_dropdown = driver.find_element(By.XPATH,'//*[@id="dynafield_{}_2_refValue"]/option[2]'.format(i))
-            mix_dropdown.click()
+            try:
+                mix_dropdown = driver.find_element(By.XPATH,'//*[@id="dynafield_{}_2_refValue"]/option[2]'.format(i))
+                mix_dropdown.click()
+            except:
+                pass
         else:
-            mix_dropdown = driver.find_element(By.XPATH,'//*[@id="dynafield_{}_2_refValue"]/option[1]'.format(i))
-            mix_dropdown.click()
+            try:
+                mix_dropdown = driver.find_element(By.XPATH,'//*[@id="dynafield_{}_2_refValue"]/option[1]'.format(i))
+                mix_dropdown.click()
+            except:
+                pass
         
         if num%50 == 0:
             next_page_click = driver.find_element(By.XPATH,'//*[@id="mNext"]/i')
