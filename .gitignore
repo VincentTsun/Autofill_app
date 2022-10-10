@@ -1,2 +1,6 @@
 __pycache__/
 programs/
+dist/
+build/
+run.spec
+run.exe

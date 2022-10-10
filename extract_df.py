@@ -46,13 +46,22 @@ def find_first_num(row):
         if first_char_is_num(row[i]) == True:
             num = row[i]
             return num
+
+def find_non_empty(row):
+    '''Find the first string that is not empty, then returns the string.'''
+    for i in range(1,len(row)):
+        if row[i] != '':
+            return row[i]
     
 
 def first_six(lst):
     '''return the first 6 characters of every item in the list.'''
     lst2 = []
     for item in lst:
-        lst2.append(str(item)[:6])
+        if item[:2] != 'PO':
+            lst2.append(str(item)[:6])
+        else:
+            lst2.append(str(item)[:8])
     return lst2
     
 
@@ -65,10 +74,10 @@ def find_contracts(xls,contract_list):
     sheets = {}
     for i in range(len(xls.sheet_names)):
         df = pd.read_excel(xls,i,header=None)
-        contract_row = df[find_word_bool(df,'合同号')[1]].iloc[0]
-        contract_num = find_first_num(contract_row)
-        if contract_num.strip() in contract_list:
-            sheets[contract_num.strip()] = pd.read_excel(xls,i,header=None)
+        contract_row = df[find_word_bool(df,'合同号')[1]].iloc[0].dropna().reset_index(drop=True)
+        contract_num = find_non_empty(contract_row)
+        if contract_num.strip().upper() in contract_list:
+            sheets[contract_num.strip().upper()] = pd.read_excel(xls,i,header=None)
     return sheets
 
 def find_all_contracts(dir_path,contract_list):
@@ -81,6 +90,10 @@ def find_all_contracts(dir_path,contract_list):
         f = os.path.join(dir_path,filename)
         if os.path.isfile(f):
             if filename[:6] in lst:
+                xls = pd.ExcelFile(f)
+                sheets = find_contracts(xls,contract_list)
+                all_sheets.update(sheets)
+            elif filename[:2].upper() == 'PO' and filename[:8].upper() in lst:
                 xls = pd.ExcelFile(f)
                 sheets = find_contracts(xls,contract_list)
                 all_sheets.update(sheets)

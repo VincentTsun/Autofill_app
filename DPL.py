@@ -34,11 +34,13 @@ def fill_dpl(sheet,info_dict,id):
     
     #reset index for dataframes
     info_dict['colour_table'].reset_index(inplace=True)
-    #info_dict['data_table']
 
     #fill header
     sheet.range('D4').value = info_dict['style']
-    sheet.range('G4').value = id[:6]
+    if id[:2].upper() != 'PO':
+        sheet.range('G4').value = id[:6]
+    else:
+        sheet.range('G4').value = id[:8]
     
     #fill size headers
     data_location = find_loc(sheet,'SIZE',row_end=9,row_start=6,col_start=7,col_end=10)
@@ -128,6 +130,28 @@ def fill_dpl(sheet,info_dict,id):
         current_col = summary_location[1]
     print('Finish filling',id)
 
+def dpl_extract_all(dir_path,id,filename):
+    current_dict = {}
+    f = xw.Book(os.path.join(dir_path,filename))
+    for sheet in f.sheets:
+        temp_sheet = f.sheets[sheet]
+        if extract_dpl_value(temp_sheet,'合同号:',4).upper() == id.upper():
+            df = find_contracts(pd.ExcelFile(os.path.join(dir_path,filename)),[id])
+            nw = extract_dpl_value(temp_sheet,'NW:',20)
+            style = extract_dpl_value(temp_sheet,'款  号:',6)
+            cs = colour_size(df[id])
+            colours = cs[0]
+            sizes = cs[1]
+            colour_table = cs[2]
+            data_table = main_data(df[id],colours,sizes)[1]
+            for colour in colours:
+                row_end = sheet.used_range[-1].row
+                alt_name = extract_dpl_value(temp_sheet,colour,row_end=row_end,col_end=2,row_start=10,method='same_col')
+                data_table[alt_name] = data_table.pop(colour)
+            current_dict[id] = {'nw':nw,'style':style,'colours':colours,'sizes':sizes,'colour_table':colour_table,'data_table':data_table}
+            break
+    f.close()
+    return current_dict
 
 def dpl_setup(dir_path):
     '''Extract data from each corresponding Excel sheet and fill the dpl file.'''
@@ -141,30 +165,15 @@ def dpl_setup(dir_path):
     for id in input_list:
         print('Checking',id)
         for filename in os.listdir(dir_path):
-            if filename[:6] == id[:6]:
-                f = xw.Book(os.path.join(dir_path,filename))
-                for sheet in f.sheets:
-                    temp_sheet = f.sheets[sheet]
-                    if extract_dpl_value(temp_sheet,'合同号:',4) == id:
-                        df = find_contracts(pd.ExcelFile(os.path.join(dir_path,filename)),[id])
-                        nw = extract_dpl_value(temp_sheet,'NW:',20)
-                        style = extract_dpl_value(temp_sheet,'款  号:',6)
-                        cs = colour_size(df[id])
-                        colours = cs[0]
-                        sizes = cs[1]
-                        colour_table = cs[2]
-                        data_table = main_data(df[id],colours,sizes)[1]
-                        for colour in colours:
-                            row_end = sheet.used_range[-1].row
-                            alt_name = extract_dpl_value(temp_sheet,colour,row_end=row_end,col_end=2,row_start=10,method='same_col')
-                            data_table[alt_name] = data_table.pop(colour)
-                        info_dict[id] = {'nw':nw,'style':style,'colours':colours,'sizes':sizes,'colour_table':colour_table,'data_table':data_table}
-                        break_flag = True
-                        break
-                f.close()
-                if break_flag == True:
-                    break
-        print('Completed',id)
+            if filename[:2].upper() != 'PO' and filename[:6] == id[:6]:
+                info_dict.update(dpl_extract_all(dir_path,id,filename))
+                print('Completed',id)
+                break
+            elif filename[:2].upper() == 'PO' and filename[:8].upper() == id[:8].upper():
+                info_dict.update(dpl_extract_all(dir_path,id,filename))
+                print('Completed',id)
+                break
+            
     
     #copy the template sheet
     wb_template = xw.Book(os.path.join(dir_path,'dpl template.xlsx'))
@@ -186,7 +195,10 @@ def dpl_setup(dir_path):
             sheet = wb_template.sheets[1]
         else:
             input('Too many sizes for the po. Please contact me.')
-        name = str(input_list[i][:6])+'_'+str(input_port_num[i])
+        if input_list[i][:2].upper() != 'PO':
+            name = str(input_list[i][:6])+'_'+str(input_port_num[i])
+        else:
+            name = str(input_list[i][:8])+'_'+str(input_port_num[i])
         sheet.copy(after=dpl_wb.sheets[i],name=name)
         target_sheet = dpl_wb.sheets[name]
         fill_dpl(target_sheet,info_dict[input_list[i]],input_list[i])
