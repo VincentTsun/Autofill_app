@@ -6,7 +6,8 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 def style_code(df):
     '''extract the style code'''
-    row = df[find_word_bool(df,'款号')[1]].iloc[0]
+    restricted_zone = df.iloc[:,:6]
+    row = restricted_zone[find_word_bool(restricted_zone,'款号')[1]].iloc[0]
     return find_first_num(row)
 
 def colour_size(df):
