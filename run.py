@@ -30,6 +30,12 @@ def part1(dir_path):
         
         #Combine contract id and style id, serve as unique keys
         columns= ['Quantity','Carts','Weight','CBM','Mixed?','Marks','Unit']
+        for i in info_dict:
+            for j in info_dict[i]:
+                if len(info_dict[i][j])>7:
+                    print('The following caused an error:')
+                    print(i,j,info_dict[i][j])
+                    input('Please fix the error in the corresponding Excel and run the program again.')
         data_df = pd.DataFrame.from_dict({(i,j): info_dict[i][j] 
                                 for i in info_dict.keys() 
                                 for j in info_dict[i].keys()},
@@ -135,6 +141,7 @@ elif mode == 5:
     dir_path = input('Input the directory path of the folder containing all contracts: ')
     try:
         dpl_setup(dir_path)
+        input('DPL setup completed.\nPress Enter to close the program...')
     except:
         input('Error occured when trying to compile the DPL.\nPress Enter to close the program...')
 else:

@@ -19,11 +19,12 @@ def colour_size(df):
     
 
     #find the first column
-    col_bool = find_word_bool(df,'颜色')[0]
-    first_col = df[col_bool.index[col_bool]]
+    restricted_zone = df.iloc[:,:6]
+    col_bool = find_word_bool(restricted_zone,'颜色')[0]
+    first_col = restricted_zone[col_bool.index[col_bool]]
 
     #find keyword and set its index as a starting point
-    row = df[find_word_bool(df,'颜色')[1]]
+    row = restricted_zone[find_word_bool(restricted_zone,'颜色')[1]]
     row_start = row.index[1]
     
     #crop the top of the dataframe along with header row
@@ -66,7 +67,7 @@ def colour_size(df):
 def main_data(df,colours_dict,sizes):
     '''Clean up the dataframe for extracting number of cartons, cbm, weight, need for remark (True or False), and if it is mixed (True or False). Returns a dictionary.'''
     #find header rows and its index and combine with the sizes column
-    header_rows = df.loc[find_word_bool(df,'颜色')[1]]
+    header_rows = df.loc[find_word_bool(df,'颜色',ignore_row=[num for num in range(5)])[1]]
     header_index = header_rows.index[0]
     
     size_rows = df.loc[find_word_bool(df,sizes[0],ignore_row=[num for num in range(5)])[1]]
@@ -219,8 +220,11 @@ def get_all_data(contracts,input_df):
         print(i,'has begun processing')
         
         #extract data
+        data = {}
         data = main_data(contracts[i],colour_size(contracts[i])[0],colour_size(contracts[i])[1])[0]
-
+        while data == {}:
+            print('Data for',i,'is empty, trying again...')
+            data = main_data(contracts[i],colour_size(contracts[i])[0],colour_size(contracts[i])[1])[0]
         #extract marks and unit from input dataframe 
         marks = input_df.loc[i,'Marks']
         unit = input_df.loc[i,'Unit']
