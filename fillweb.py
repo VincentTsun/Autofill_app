@@ -215,9 +215,12 @@ def fill_in(data_df,driver,startline='',endline=''):
         #    marks_field.send_keys(Keys.RETURN)
         #    marks_field.send_keys(data_row['Remark text'].values)
 
-        country_code_field = driver.find_element(By.XPATH,'//*[@id="EditSOForm_soDto_soLineDtoList_{}__soLineHtsDtoList_0__country_countryCode"]'.format(i))
-        country_code_field.clear()
-        country_code_field.send_keys('CN')
+        try:
+            country_code_field = driver.find_element(By.XPATH,'//*[@id="EditSOForm_soDto_soLineDtoList_{}__soLineHtsDtoList_0__country_countryCode"]'.format(i))
+            country_code_field.clear()
+            country_code_field.send_keys('CN')
+        except:
+            print('Skipped country code field')
 
         if data_row['Mixed?'].bool() == True:
             try:
@@ -245,7 +248,7 @@ def fill_in(data_df,driver,startline='',endline=''):
             break
         except:
             time.sleep(1)
-    input('\nSaving complete! \nPress Enter to proceeed...')
+    input('\nSaving complete! \nIf you have mismatched quantity, press Enter to proceeed...')
     
     #filling mismatched quantity on the system after the user checked for errors
     if len(wrongquantnum) != 0:
@@ -257,12 +260,12 @@ def fill_in(data_df,driver,startline='',endline=''):
             for num in wrongquantnum:
                 while True:
                     try:
-                        po_id_web = driver.find_element(By.ID,'POID_{}'.format(num))
-                        sku_id_web = driver.find_element(By.ID,'SKUID_{}'.format(num))
+                        po_id_web = driver.find_element(By.ID,'POID_{}'.format(num-1))
+                        sku_id_web = driver.find_element(By.ID,'SKUID_{}'.format(num-1))
                         web_key = (po_id_web.text,sku_id_web.text)
                         data_row = data_df_reset[data_df_reset['index'] == str(web_key)]
 
-                        quantity_field = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bookedQtyId{}"]'.format(i))))
+                        quantity_field = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="bookedQtyId{}"]'.format(num-1))))
                         quantity_field.click()
                         break
                     except:
@@ -272,8 +275,8 @@ def fill_in(data_df,driver,startline='',endline=''):
                 print(web_key,'verified. Begin filling...')
                 quantity_field.send_keys(Keys.CONTROL + "a")
                 quantity_field.send_keys(int(data_row['Quantity'].item()))
-    
-    print('\nData filling process complete!\nPress Enter to close the program...')
+        save_draft(driver)
+    input('\nData filling process complete!\nPress Enter to close the program...') 
 
 
             
