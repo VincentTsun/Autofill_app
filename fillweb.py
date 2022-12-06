@@ -216,6 +216,15 @@ def fill_in(data_df,driver,startline='',endline=''):
         #    marks_field.send_keys(data_row['Remark text'].values)
 
         try:
+            hs_code_field = driver.find_element(By.XPATH,'//*[@id="EditSOForm_soDto_soLineDtoList_{}__soLineHtsDtoList_0__htsCode"]'.format(i))
+            hs_code_field.click()
+            hs_code_field.send_keys(Keys.CONTROL + "a")
+            hs_code_field.send_keys(Keys.BACKSPACE)
+            hs_code_field.send_keys(data_row['HS_Code'].values)
+        except:
+            print('Skipped HS Code field')
+        
+        try:
             country_code_field = driver.find_element(By.XPATH,'//*[@id="EditSOForm_soDto_soLineDtoList_{}__soLineHtsDtoList_0__country_countryCode"]'.format(i))
             country_code_field.clear()
             country_code_field.send_keys('CN')

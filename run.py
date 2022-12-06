@@ -9,7 +9,7 @@ from DPL import dpl_setup
 def part1(dir_path):
 
     #create an empty excel sheet with columns for user input
-    input_df = pd.DataFrame(None,columns=['Contract_id','Port_num','Marks','Unit'])
+    input_df = pd.DataFrame(None,columns=['Contract_id','Port_num','Marks','HS_Code','Unit'])
     input_df.to_excel(os.path.join(dir_path,'Input.xlsx'),index=False)
 
     #stop the program for user input
@@ -29,10 +29,10 @@ def part1(dir_path):
         info_dict = get_all_data(all_contracts,input_contract)
         
         #Combine contract id and style id, serve as unique keys
-        columns= ['Quantity','Carts','Weight','CBM','Mixed?','Marks','Unit']
+        columns= ['Quantity','Carts','Weight','CBM','Mixed?','Marks','HS_Code','Unit']
         for i in info_dict:
             for j in info_dict[i]:
-                if len(info_dict[i][j])>7:
+                if len(info_dict[i][j])>8:
                     print('The following caused an error:')
                     print(i,j,info_dict[i][j])
                     input('Please fix the error in the corresponding Excel and run the program again.')

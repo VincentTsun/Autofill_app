@@ -75,7 +75,7 @@ def find_contracts(xls,contract_list):
     for i in range(len(xls.sheet_names)):
         df = pd.read_excel(xls,i,header=None)
         contract_row = df[find_word_bool(df,'合同号')[1]].iloc[0].dropna().reset_index(drop=True)
-        contract_num = find_non_empty(contract_row)
+        contract_num = str(find_non_empty(contract_row))
         if contract_num.strip().upper() in contract_list:
             sheets[contract_num.strip().upper()] = pd.read_excel(xls,i,header=None)
     return sheets

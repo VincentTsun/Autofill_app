@@ -227,9 +227,11 @@ def get_all_data(contracts,input_df):
             data = main_data(contracts[i],colour_size(contracts[i])[0],colour_size(contracts[i])[1])[0]
         #extract marks and unit from input dataframe 
         marks = input_df.loc[i,'Marks']
+        hs_code = input_df.loc[i,'HS_Code']
         unit = input_df.loc[i,'Unit']
         for v in data:
             data[v].append(marks)
+            data[v].append(hs_code)
             data[v].append(unit.strip().upper())
         
         style = style_code(contracts[i])
