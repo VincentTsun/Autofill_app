@@ -135,7 +135,10 @@ def dpl_extract_all(dir_path,id,filename):
     f = xw.Book(os.path.join(dir_path,filename))
     for sheet in f.sheets:
         temp_sheet = f.sheets[sheet]
-        if extract_dpl_value(temp_sheet,'合同号:',4).upper() == id.upper():
+        check_value = extract_dpl_value(temp_sheet,'合同号:',4)
+        if type(check_value) == float or type(check_value) == int:
+            check_value = str(int(check_value))
+        if check_value.upper() == id.upper():
             df = find_contracts(pd.ExcelFile(os.path.join(dir_path,filename)),[id])
             nw = extract_dpl_value(temp_sheet,'NW:',20)
             style = extract_dpl_value(temp_sheet,'款  号:',6)
