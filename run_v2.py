@@ -115,30 +115,26 @@ def main_data(df,colours_dict,sizes,contracts,contract):
         temp_df.fillna(0,inplace=True)
         temp_df.columns = temp_df.columns.astype(str).str.replace("\n", "")
         
-        #Make a copy of temp_df to preserve all rows for later calculations
-        temp_df1 = temp_df[:]
-        
         #extract quantity first
         size_iter = sizes[:]
+        current_box = int(temp_df['箱号'].iloc[0])
         for box_num in temp_df['箱号']:
             temp_dict = {}
-            if int(box_num) == 1:
-                previous = 0
-            while previous != int(box_num):
-                previous += 1
+            while current_box != int(box_num)+temp_df[temp_df['箱号']==box_num].loc[:,'总箱数'].sum():                
                 for i in size_iter:
-                    style = style_code(contracts[contract])
-                    name = style+'-'+colours_dict[colour]+'-'+i
-                    quant = temp_df[temp_df['箱号']==str(previous)][i].sum()
-                    weight = quant*0.104
-                    cbm = temp_df[temp_df['箱号']==str(previous)]['CBM'].sum() / temp_df[temp_df['箱号']==str(previous)]['总箱数'].sum() / temp_df[temp_df['箱号']==str(previous)]['每箱数量'].sum() * quant
+                    quant = temp_df[temp_df['箱号']==str(box_num)][i].sum()
                     if quant > 0:
+                        style = style_code(contracts[contract])
+                        name = style+'-'+colours_dict[colour]+'-'+i
+                        weight = (temp_df[temp_df['箱号']==str(box_num)]['净重'].sum()/temp_df[temp_df['箱号']==str(box_num)]['每箱数量'].sum())*quant+ (temp_df[temp_df['箱号']==str(box_num)]['纸箱重量'].sum()/temp_df[temp_df['箱号']==str(box_num)]['每箱数量'].sum())*quant
+                        cbm = temp_df[temp_df['箱号']==str(box_num)]['CBM'].sum() / temp_df[temp_df['箱号']==str(box_num)]['总箱数'].sum() / temp_df[temp_df['箱号']==str(box_num)]['每箱数量'].sum() * quant
                         temp_dict[name] = {'Quantity':quant,'CBM':cbm,'Weight':weight}
-                box_name = "BOX"+str(previous)
+                box_name = "BOX"+str(current_box)
                 temp_data[box_name] = temp_dict
-                
+                current_box += 1
+               
         data.update(temp_data)
-        data_dfs[colour] = temp_df1
+        data_dfs[colour] = temp_df
     return data, data_dfs
 
 def get_all_data(contracts,input_df):
@@ -209,7 +205,7 @@ def part1(dir_path):
             file_name = os.path.join(dir_path,'output\\'+key1+'.xlsx')
             new_dict.to_excel(file_name,index=False)
         
-        input('Process completed. Please check '+file_name+' for the output files...')
+        input('Process completed. Please check '+path+' for the output files...')
 
     except Exception as e: 
         print(e)
@@ -218,3 +214,14 @@ def part1(dir_path):
 
 dir_path = input('Input the directory path of the folder containing all contracts: ')
 part1(dir_path)
+
+csv_txt = input("Enter y if you want to convert to csv file...")
+dir_path = os.path.join(dir_path,'output')
+if csv_txt == "y":
+    for filename in os.listdir(dir_path):
+        if filename[-4:] == "xlsx":
+            excelfile = pd.read_excel(os.path.join(dir_path,filename))
+            excelfile.to_csv(os.path.join(dir_path,filename[:-5]+".csv"),index=False)
+    input("csv file exported. Press Enter to close the program...")
+else:
+    input("Press Enter to end the program...") 
