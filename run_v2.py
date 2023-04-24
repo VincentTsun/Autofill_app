@@ -220,7 +220,7 @@ dir_path = os.path.join(dir_path,'output')
 if csv_txt == "y":
     for filename in os.listdir(dir_path):
         if filename[-4:] == "xlsx":
-            excelfile = pd.read_excel(os.path.join(dir_path,filename))
+            excelfile = pd.read_excel(os.path.join(dir_path,filename),keep_default_na=False)
             excelfile.to_csv(os.path.join(dir_path,filename[:-5]+".csv"),index=False)
     input("csv file exported. Press Enter to close the program...")
 else:
