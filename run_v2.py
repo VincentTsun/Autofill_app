@@ -58,7 +58,7 @@ def colour_size(df):
     #find all the possible sizes and append to the list
     for i in range(len(cropped_df.columns)):
         if pd.notnull(cropped_df.columns[i]):
-            if cropped_df.columns[i].upper() in ['2XS','XS','S','M','L','XL']:
+            if cropped_df.columns[i].upper() in ['OS','2XS','XS','S','M','L','XL']:
                 sizes.append(cropped_df.columns[i])
             elif first_char_is_num(cropped_df.columns[i]) == True:
                 sizes.append(cropped_df.columns[i])
